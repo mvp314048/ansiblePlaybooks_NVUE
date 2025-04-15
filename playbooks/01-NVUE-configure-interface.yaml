@@ -1,0 +1,62 @@
+#Start
+---
+- name: Configure interface settings with ordered loopback IPs
+  hosts: leafSwitches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    loopback_base: "10.10.10"
+
+  tasks:
+    - name: Create new revision
+      nvidia.nvue.config:
+        state: new
+      register: revision
+
+    - name: Dump revision ID
+      ansible.builtin.debug:
+        msg: '{{ revision.revid }}'
+
+    - name: Set interfaces with ordered loopback IP
+      nvidia.nvue.interface:
+        state: merged
+        revid: '{{ revision.revid }}'
+        data:
+          - id: lo
+            ip:
+              address:
+                - id: '{{ loopback_base }}.{{ groups["leafSwitches"].index(inventory_hostname) + 1 }}/32'
+            type: 'loopback'
+      register: interface
+
+    - name: Dump interface update output
+      ansible.builtin.debug:
+        msg: '{{ interface }}'
+
+    - name: Apply new revision
+      nvidia.nvue.config:
+        state: apply
+        revid: '{{ revision.revid }}'
+        force: true
+        wait: 10
+      register: revision
+
+    - name: Dump apply output
+      ansible.builtin.debug:
+        msg: '{{ revision }}'
+
+    - name: Fetch interface config
+      nvidia.nvue.interface:
+        state: gathered
+      register: interface
+
+    - name: Display interface config
+      ansible.builtin.debug:
+        msg: '{{ interface }}'
+
+...
+#End

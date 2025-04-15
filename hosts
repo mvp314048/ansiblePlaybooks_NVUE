@@ -1,0 +1,37 @@
+# Default Ansible host file ---
+# Blank links are ignored
+# 	- Comments begin with the '#' character
+# 	- Groups of hosts are delimited by [Header] elements
+# 	- Hostnames or IP Address are accepted
+# 	- A Hostname/IP can be a member of multiple groups
+
+
+[Linux_servers]
+172.27.43.123
+
+[leafSwitches]
+172.27.43.132
+172.27.43.133
+172.27.43.134 
+172.27.43.135
+
+[ibswitches]
+#Nvidia QM8700
+172.27.43.130 ansible_ssh_user=admin ansible_ssh_pass=password
+#Nvidia QM9700
+172.27.43.131 ansible_ssh_user=admin ansible_ssh_pass=admin
+
+
+[leafSwitches:vars]
+ansible_ssh_user=cumulus
+ansible_ssh_pass=Superm1cr@
+
+#server variables
+[Linux_servers:vars] 
+ansible_ssh_user=ryan 
+ansible_ssh_pass=Up$@917n@tstar!23
+
+
+
+
+# Example: For IOS based switches, The: "ansible_become_method=enable" should be added
