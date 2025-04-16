@@ -1,6 +1,6 @@
 #Start
 ---
-- name: Configure interface settings with ordered loopback IPs
+- name: Applying interface settings with ordered loopback IPs
   hosts: leafSwitches
   connection: ansible.netcommon.httpapi
   gather_facts: false
